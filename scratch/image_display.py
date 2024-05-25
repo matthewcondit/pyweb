@@ -149,7 +149,6 @@ def main():
                 # Convert chunk to a numpy array of pixel values
                 pixels = np.array(chunk.getdata())
                 print(pixels)
-                sys.exit(1)
                 # Convert the chunk to a Unicode character
                 unicode_char = chunk_to_unicode(pixels)
 

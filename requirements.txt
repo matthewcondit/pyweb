@@ -2,4 +2,11 @@ beautifulsoup4
 pillow
 rich
 colorama
+requests
 
+ascii-magic
+asciimatics
+chafa.py
+MagickWand
+termcolor
+numpy

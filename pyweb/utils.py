@@ -3,8 +3,12 @@ import os
 import logging
 import requests
 from bs4 import BeautifulSoup
+from rich import print
 from rich.console import Console
 from rich.text import Text
+from rich.panel import Panel
+
+console = Console()
 
 
 def image_viewer(
@@ -30,7 +34,6 @@ def image_viewer(
         # Return the output from Chafa
         return result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
         # Log the error
         logging.error(f"An error occurred: {e}")
 
@@ -62,7 +65,8 @@ def parse_html(html):
     :return: The parsed BeautifulSoup object representing the HTML content.
     """
     logging.debug("Parsing HTML")
-    return BeautifulSoup(html, "html.parser")
+    parsed_html = BeautifulSoup(html, "html.parser")
+    return parsed_html
 
 
 def process_html_file(file_path):
@@ -72,30 +76,55 @@ def process_html_file(file_path):
     :param file_path: The path to the HTML file.
     """
     logging.debug(f"File path was given: {file_path}")
+
     html_content = open(file_path).read()
     return parse_html(html_content)
+
+
+def render_html(soup):
+
+    rendered_text = ""
+    print(soup.name)
+    if soup.name == "[document]":
+        print("document")
+        for element in soup.head.descendants:
+            print(element.name)
+            if element.name == "title":
+                print("found title")
+                rendered_text += render_element(element)
+    return rendered_text
+    # print(soup.name)
+    # rendered_text = ""
+    # if soup.name == "[document]":
+    #     for element in soup.body.descendants:
+    #         if element.name:
+    #             rendered_text += render_element(element)
+    # elif soup.name == "div":
+    #     for element in soup.descendants:
+    #         if element.name:
+    #             rendered_text += render_element(element)
+
+    return rendered_text
 
 
 def render_element(element):
     if element.name == "p":
         return element.get_text() + "\n"
+    elif element.name == "title":
+        # Place a box around the title
+        title = element.get_text()
+        return Panel(title) + "\n"
     elif element.name == "a":
         return f"[{element.get_text()}]({element.get('href')})"
-    elif element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
+    elif element.name in ["h1", "h2", "h3", "h4", "h5", "h6", "title"]:
         return element.get_text().upper() + "\n"
+    elif element.name == "div":
+        return render_html(element)
     else:
         return element.get_text()
 
 
-def render_html(soup):
-    rendered_text = ""
-    for element in soup.body.descendants:
-        if element.name:
-            rendered_text += render_element(element)
-    return rendered_text
-
-
 def display_content(content):
+    ...
     os.system("clear")
-    console = Console()
     console.print(content)

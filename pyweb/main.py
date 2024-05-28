@@ -9,7 +9,7 @@ from pyweb.utils import (
 )
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.ERROR)
 
 
 def main() -> str:
@@ -39,11 +39,10 @@ def main() -> str:
 
     # TODO: Process the HTML content as needed
     rendered_content = render_html(html_content)
-    display_content(rendered_content)
 
-    return ""  # Return an empty string if no output is generated
+    return rendered_content  # Return an empty string if no output is generated
 
 
 if __name__ == "__main__":
     output = main()
-    print(output)
+    display_content(output)
